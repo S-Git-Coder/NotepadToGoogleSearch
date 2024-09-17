@@ -7,6 +7,7 @@ const filePath = path.join(__dirname, 'notepad.txt');
 
 // Variable to store the debounce timer
 let debounceTimeout;
+let previousQuery = '';
 
 // Monitor the Notepad file for changes
 fs.watchFile(filePath, (curr, prev) => {
@@ -26,11 +27,41 @@ fs.watchFile(filePath, (curr, prev) => {
                 return;
             }
 
-            const searchQuery = data.trim();
-            if (searchQuery.length > 0) {
-                console.log(`Performing Google search for query: "${searchQuery}"`);
-                searchGoogle(searchQuery);
+            let searchQuery = data.trim();
+
+            // Validation #1: Check for empty or whitespace content
+            if (searchQuery.length === 0) {
+                console.log('No content in notepad.txt. Skipping search.');
+                return;
             }
+
+            // Validation #2: Ensure minimum character length
+            if (searchQuery.length < 3) {
+                console.log('Query too short. Minimum 3 characters required.');
+                return;
+            }
+
+            // Validation #3: Remove special characters (optional)
+            searchQuery = searchQuery.replace(/[^\w\s]/gi, ''); // Removes special characters
+
+            // Validation #4: Prevent duplicate searches
+            if (searchQuery === previousQuery) {
+                console.log('Duplicate query. Skipping search.');
+                return;
+            }
+
+            // Validation #5: Maximum length check
+            if (searchQuery.length > 500) {
+                console.log('Query too long. Maximum 500 characters allowed.');
+                return;
+            }
+
+            // Store the current query as previous
+            previousQuery = searchQuery;
+
+            // Perform the search if all validations pass
+            console.log(`Performing Google search for query: "${searchQuery}"`);
+            searchGoogle(searchQuery);
         });
     }, 5000); // 5000ms = 5 seconds
 });
