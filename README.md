@@ -46,6 +46,4 @@ A Node.js utility that monitors a local notepad.txt file and automatically perfo
 
 ISC
 
----
 
-You can copy and upload this as your `README.md` on GitHub. Let me know if you want to customize or add more details!
